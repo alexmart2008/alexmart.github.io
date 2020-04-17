@@ -1,35 +1,13 @@
-let 
+var 
 	canv   = document.getElementById('canvas1'),
 	ctx    = canv.getContext('2d'),
-	coords = []
-	isMouseDown = false
-canv.width = window.innerWidth;
-canv.height = window.innerHeight;
+	coords = [],
+	isMouseDown = false,
+	f = 1
+var i = 0
+canv.width = window.innerWidth ;
+canv.height = window.innerHeight   ;
 //code
-canv.addEventListener('mousedown', function() {
-	isMouseDown = true
-})
-
-canv.addEventListener('mouseup', function() {
-	isMouseDown = false
-	ctx.beginPath()
-	coords.push('mouseup')
-})
-ctx.lineWidth = 5 * 2
-canv.addEventListener('mousemove', function(e) {
-	if (isMouseDown) {
-		coords.push([e.clientX, e.clientY])
-		ctx.lineTo(e.clientX, e.clientY)
-		ctx.stroke()
-
-		ctx.beginPath()
-		ctx.arc(e.clientX, e.clientY, 5, 0, Math.PI * 2)
-		ctx.fill()
-
-		ctx.beginPath()
-		ctx.moveTo(e.clientX, e.clientY)
-	}
-})
 function save() {
 	localStorage.setItem('coords', JSON.stringify(coords))
 }
@@ -40,14 +18,15 @@ function clear() {
 	ctx.fillStyle = 'black';
 }
 function replay() {
-	let
+	f = 0
+	var
 		timer = setInterval(function() {
 			if(!coords.length) {
 				clearInterval(timer)
 				ctx.beginPath()
 				return
 			}
-			let
+			var
 				crd = coords.shift()
 				e = {
 					clientX: crd["0"],
@@ -63,10 +42,48 @@ function replay() {
 
 			ctx.beginPath()
 			ctx.moveTo(e.clientX, e.clientY)
+			f = 0
+
+			
 		}, 10)
-}
-document.addEventListener('keydown', function(e) {
 	
+}
+if (f === 1) {
+	canv.addEventListener('mousedown', function() {
+		if (f === 1) {
+			isMouseDown = true
+	}
+	})
+
+	canv.addEventListener('mouseup', function() {
+		if (f === 1) {
+			isMouseDown = false
+			ctx.beginPath()
+			coords.push('mouseup')
+	}
+	})
+	ctx.lineWidth = 5 * 2
+
+	canv.addEventListener('mousemove', function(e) {
+		if (f === 1) {
+			if (isMouseDown) {
+				coords.push([e.clientX, e.clientY])
+				ctx.lineTo(e.clientX, e.clientY)
+				ctx.stroke()
+
+				ctx.beginPath()
+				ctx.arc(e.clientX, e.clientY, 5, 0, Math.PI * 2)
+				ctx.fill()
+
+				ctx.beginPath()
+				ctx.moveTo(e.clientX, e.clientY)
+		}
+	}
+})
+}
+
+document.addEventListener('keydown', function(e) {
+
 	if( e.keyCode == 83 ) {
 		//save
 		save()
@@ -74,13 +91,21 @@ document.addEventListener('keydown', function(e) {
 	}
 	if( e.keyCode == 13 ) {
 		//replay
+		
 		console.log('Replaying...')
 		coords = JSON.parse(localStorage.getItem('coords'))
 		clear()
 		replay()
+		
+		
+	}
+	if( e.keyCode == 82 ) {
+		//save
+		f = 1
 	}
 	if( e.keyCode == 67 ) {
 		clear();
 		console.log('Cleared')
 	}
+	f = 1
 })
