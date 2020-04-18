@@ -63,7 +63,22 @@ if (f === 1) {
 	}
 	})
 	ctx.lineWidth = 5 * 2
+	canv.addEventListener('touchstart', function(e) {
+		if (f === 1) {
+			if (isMouseDown) {
+				coords.push([e.clientX, e.clientY])
+				ctx.lineTo(e.clientX, e.clientY)
+				ctx.stroke()
 
+				ctx.beginPath()
+				ctx.arc(e.clientX, e.clientY, 5, 0, Math.PI * 2)
+				ctx.fill()
+
+				ctx.beginPath()
+				ctx.moveTo(e.clientX, e.clientY)
+		}
+	}
+})
 	canv.addEventListener('mousemove', function(e) {
 		if (f === 1) {
 			if (isMouseDown) {
